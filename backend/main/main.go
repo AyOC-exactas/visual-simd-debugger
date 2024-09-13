@@ -53,16 +53,16 @@ type FPRegs struct {
 	_        [24]uint32 // padding
 }
 
-//XMMData contains the data that has to be delivered to the frontend for each XMM register
+// XMMData contains the data that has to be delivered to the frontend for each XMM register
 type XMMData struct {
 	XmmID     string
 	XmmValues []string
 }
 
-//CellRegisters contains the different XMMData in a cell.
+// CellRegisters contains the different XMMData in a cell.
 type CellRegisters []XMMData
 
-//Contains returns true if CellRegisters contains XMMData input
+// Contains returns true if CellRegisters contains XMMData input
 func (cellRegs *CellRegisters) Contains(newXmmData *XMMData) bool {
 
 	for _, xmmData := range *cellRegs {
@@ -73,7 +73,7 @@ func (cellRegs *CellRegisters) Contains(newXmmData *XMMData) bool {
 	return false
 }
 
-//Estoy adentro de docker?
+// Estoy adentro de docker?
 func isRunningInDockerContainer() bool {
 	// docker creates a .dockerenv file at the root
 	// of the directory tree inside the container.
@@ -87,8 +87,8 @@ func isRunningInDockerContainer() bool {
 	return false
 }
 
-//ResponseObj is the object send to the client as a JSON.
-//This contains the console error and the info of every register to print.
+// ResponseObj is the object send to the client as a JSON.
+// This contains the console error and the info of every register to print.
 type ResponseObj struct {
 	ConsoleOut string
 	CellRegs   []CellRegisters //Could be a slice of any of int or float types
@@ -654,7 +654,6 @@ func codeSave(w http.ResponseWriter, req *http.Request) {
 		"-b", "/proc", //Bindiamos /proc
 		"-r",                                                                     //Remonta /proc a readonly
 		execMap["ld"], "-nostdlib", "-static", "-o", randomFile, randomFile+".o") //Comando ejecutador de LD
-
 	linkingCmd.Stderr = &stderr
 	linkingCmd.Stdout = os.Stdout
 

@@ -12,38 +12,44 @@ FROM golang:1.15.10 as builder
 #Then install git and libcap-dev because minijail needs it
 #Then install libseccomp-dev for using microjail
 #Then download minijail
-WORKDIR /
-RUN \
-apt-get update && \
-apt-get install -y apt-utils && \
-apt-get install nasm && \
-apt-get install -y libcap-dev && \ 
-apt-get install -y git && \
-apt-get install -y libseccomp-dev && \
-git clone https://android.googlesource.com/platform/external/minijail ./minijail && \
-mkdir clients && \
+
+WORKDIR /app
+RUN apt-get update
+RUN apt-get install -y\
+ apt-utils\
+ nasm\
+ libcap-dev\ 
+ git\
+ libseccomp-dev
+
+RUN git clone https://android.googlesource.com/platform/external/minijail ./minijail
+
+RUN mkdir /clients
 
 #Installing minijail
-WORKDIR /minijail
+WORKDIR /app/minijail
 
 RUN \
-make LIBDIR=/lib64 && \
+mkdir -p /lib64 && make LIBDIR=/lib64 && \
 cp libminijail.so /lib64/ && \
 cp libminijailpreload.so /lib64/ && \
 cp minijail0 /usr/bin/
 
-WORKDIR /go/src
+WORKDIR /app
 #Copy all dependencies
-COPY ./gitlab.com/juampi_miceli/visual-simd-debugger/backend ./gitlab.com/juampi_miceli/visual-simd-debugger/backend
+COPY ./ ./
+RUN mkdir -p $GOPATH/src/gitlab.com/juampi_miceli/visual-simd-debugger/backend/
+RUN cp -r /app/xmmhandler/ $GOPATH/src/gitlab.com/juampi_miceli/visual-simd-debugger/backend
+RUN cp -r /app/cellshandler/ $GOPATH/src/gitlab.com/juampi_miceli/visual-simd-debugger/backend
+
 
 #Installing microjail
-WORKDIR /go/src/gitlab.com/juampi_miceli/visual-simd-debugger/backend/microjail
+WORKDIR /app/microjail
 RUN make docker-install
 
-
-WORKDIR /go/src/gitlab.com/juampi_miceli/visual-simd-debugger/backend/main
+WORKDIR /app/main
 #Build go exectutable
-RUN go build -o http
+RUN GOOS=linux GOARCH=amd64  go build -o http
 
 #Run go executable
 CMD ["./http"]

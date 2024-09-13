@@ -8,6 +8,13 @@ El mismo cuenta con un formato similar al de jupyter notebook, separándose en c
 
 ## Modo de uso:
 
+### Correr en local
+
+- Instalar [Docker](https://docs.docker.com/engine/)
+- `docker compose up -d`
+- Ir a http://localhost:3000 (Si no anda probar http://0.0.0.0:3000)
+- Profit
+
 ### Sección de datos:
 
 La primer celda siempre corresponde a la celda de datos y está señalizada por la etiqueta `section .data`, los datos se definen exactamente como lo haríamos en assembler.
