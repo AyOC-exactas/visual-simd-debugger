@@ -11,8 +11,12 @@ FROM node:alpine
 WORKDIR '/app'
 
 COPY package.json .
+
+ENV NODE_OPTIONS=--openssl-legacy-provider
+
 RUN npm install
 COPY . .
+
 RUN \
 yarn build && \
 npm install -g serve
