@@ -1,0 +1,25 @@
+set disassembly-flavor intel
+target remote localhost:1234
+
+display $xmm0.uint128
+display $xmm1.uint128
+display $xmm2.uint128
+display $xmm3.uint128
+display $xmm4.uint128
+display $xmm5.uint128
+display $xmm6.uint128
+display $xmm7.uint128
+display $xmm8.uint128
+display $xmm9.uint128
+display $xmm10.uint128
+display $xmm11.uint128
+display $xmm12.uint128
+display $xmm13.uint128
+display $xmm14.uint128
+display $xmm15.uint128
+
+define r
+	target remote localhost:1234
+end
+
+break simd_main
