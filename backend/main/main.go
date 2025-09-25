@@ -18,9 +18,6 @@ import (
 	"strconv"
 	"syscall"
 	"unsafe"
-
-	"gitlab.com/juampi_miceli/visual-simd-debugger/backend/cellshandler"
-	"gitlab.com/juampi_miceli/visual-simd-debugger/backend/xmmhandler"
 )
 
 const (
@@ -111,7 +108,7 @@ func response(w *http.ResponseWriter, obj interface{}) {
 	(*w).Write(responseJSON)
 }
 
-func getRequestedRegisters(requests *cellshandler.XmmRequests, xmmHandler *xmmhandler.XMMHandler, xmmFormat *cellshandler.XMMFormat) CellRegisters {
+func getRequestedRegisters(requests *XmmRequests, xmmHandler *XMMHandler, xmmFormat *XMMFormat) CellRegisters {
 	cellRegisters := CellRegisters{}
 
 	for _, request := range *requests {
@@ -139,7 +136,7 @@ func containsInt(elem int, s []int) bool {
 	return false
 }
 
-func getChangedRegisters(hiddenRegs *cellshandler.HiddenInCell, oldXmmHandler *xmmhandler.XMMHandler, newXmmHandler *xmmhandler.XMMHandler, xmmFormat *cellshandler.XMMFormat) CellRegisters {
+func getChangedRegisters(hiddenRegs *HiddenInCell, oldXmmHandler *XMMHandler, newXmmHandler *XMMHandler, xmmFormat *XMMFormat) CellRegisters {
 	cellRegisters := CellRegisters{}
 
 	for index := range oldXmmHandler.Xmm {
@@ -159,7 +156,7 @@ func getChangedRegisters(hiddenRegs *cellshandler.HiddenInCell, oldXmmHandler *x
 	return cellRegisters
 }
 
-func getXMMRegs(pid int) (xmmhandler.XMMHandler, error) {
+func getXMMRegs(pid int) (XMMHandler, error) {
 	var fpRegs FPRegs
 
 	err := getFPRegs(pid, &fpRegs)
@@ -167,11 +164,11 @@ func getXMMRegs(pid int) (xmmhandler.XMMHandler, error) {
 
 	if err != nil {
 		fmt.Println(err)
-		return xmmhandler.XMMHandler{}, err
+		return XMMHandler{}, err
 	}
 	xmmSlice := fpRegs.XMMSpace[:]
 
-	return xmmhandler.NewXMMHandler(&xmmSlice), err
+	return NewXMMHandler(&xmmSlice), err
 }
 
 func joinWithPriority(cellRegs1 *CellRegisters, cellRegs2 *CellRegisters) CellRegisters {
@@ -187,29 +184,29 @@ func joinWithPriority(cellRegs1 *CellRegisters, cellRegs2 *CellRegisters) CellRe
 	return resCellRegisters
 }
 
-func setDefaultDataFormat(xmmFormat *cellshandler.XMMFormat, newDataFormat string) {
+func setDefaultDataFormat(xmmFormat *XMMFormat, newDataFormat string) {
 	for i := range xmmFormat.DefaultDataFormat {
 		xmmFormat.DefaultDataFormat[i] = newDataFormat
 	}
 }
 
-func setDefaultPrintFormat(xmmFormat *cellshandler.XMMFormat, newPrintFormat string) {
+func setDefaultPrintFormat(xmmFormat *XMMFormat, newPrintFormat string) {
 	for i := range xmmFormat.DefaultPrintingFormat {
 		xmmFormat.DefaultPrintingFormat[i] = newPrintFormat
 	}
 }
 
-func updatePrintFormat(cellsData *cellshandler.CellsData, cellIndex int, xmmFormat *cellshandler.XMMFormat) {
+func updatePrintFormat(cellsData *CellsData, cellIndex int, xmmFormat *XMMFormat) {
 	r := regexp.MustCompile(`(( |\t)+)?;(( |\t)+)?(print|p)(( |\t)+)?(?P<printFormat>\/(d|x|t|u))?(( |\t)+)?(?P<xmmID>xmm([0-9]|1[0-5])?)\.(?P<dataFormat>v16_int8|v8_int16|v4_int32|v2_int64|v4_float|v2_double)`)
 	matches := r.FindAllStringSubmatch(cellsData.Data[cellIndex].Code, -1)
 
 	if len(matches) > 0 {
 		for _, match := range matches {
-			values := cellshandler.GetGroupValues(r, match)
+			values := GetGroupValues(r, match)
 			if values["xmmID"] != "xmm" {
 				//This only changes one register
 				fmt.Println("Quiero imprimir: ", values["xmmID"])
-				xmmNumber := cellshandler.XmmID2Number(values["xmmID"])
+				xmmNumber := XmmID2Number(values["xmmID"])
 				if !(values["printFormat"] == "") {
 					fmt.Println("El valor estaba vacio, nuevo valor: ", values["printFormat"])
 					xmmFormat.DefaultPrintingFormat[xmmNumber] = values["printFormat"]
@@ -292,7 +289,7 @@ func killProcess(pid int, err string) ResponseObj {
 	return ResponseObj{ConsoleOut: err + "\nProcess killed succesfully."}
 }
 
-func cellsLoop(cellsData *cellshandler.CellsData, pid int, xmmFormat *cellshandler.XMMFormat) ResponseObj {
+func cellsLoop(cellsData *CellsData, pid int, xmmFormat *XMMFormat) ResponseObj {
 
 	res := ResponseObj{CellRegs: make([]CellRegisters, 0)}
 	cellIndex := 0
@@ -383,8 +380,8 @@ func fileExists(filePath string) bool {
 	return err == nil
 }
 
-func getCellsData(req *http.Request) (cellshandler.CellsData, error) {
-	cellsData := cellshandler.NewCellsData()
+func getCellsData(req *http.Request) (CellsData, error) {
+	cellsData := NewCellsData()
 
 	dec := json.NewDecoder(req.Body)
 
@@ -449,7 +446,7 @@ func codeSave(w http.ResponseWriter, req *http.Request) {
 
 	printJSONInput(req)
 
-	xmmFormat := cellshandler.NewXMMFormat()
+	xmmFormat := NewXMMFormat()
 	cellsData, decodeErr := getCellsData(req)
 	if decodeErr != nil {
 		response(&w, ResponseObj{ConsoleOut: "Could't read data from the client properly."})

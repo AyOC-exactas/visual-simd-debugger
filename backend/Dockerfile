@@ -6,7 +6,7 @@
 #To run:
 #sudo docker run -d --rm --name v-simd-back --network host visual-simd-back
 
-FROM public.ecr.aws/docker/library/golang:1.15.10 as builder
+FROM public.ecr.aws/docker/library/golang:1.24.1 as builder
 
 #Update system and install nasm
 #Then install git and libcap-dev because minijail needs it
@@ -39,8 +39,6 @@ WORKDIR /app
 #Copy all dependencies
 COPY ./ ./
 RUN mkdir -p $GOPATH/src/gitlab.com/juampi_miceli/visual-simd-debugger/backend/
-RUN cp -r /app/xmmhandler/ $GOPATH/src/gitlab.com/juampi_miceli/visual-simd-debugger/backend
-RUN cp -r /app/cellshandler/ $GOPATH/src/gitlab.com/juampi_miceli/visual-simd-debugger/backend
 
 
 #Installing microjail

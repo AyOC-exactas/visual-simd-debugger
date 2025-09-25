@@ -1,21 +1,19 @@
-package cellshandler
+package main
 
 import (
 	"regexp"
 	"strconv"
 	"strings"
-
-	"gitlab.com/juampi_miceli/visual-simd-debugger/backend/xmmhandler"
 )
 
-//CellData is the data of the cell that is received from the frontend
+// CellData is the data of the cell that is received from the frontend
 type CellData struct {
 	ID   int    `json:"id"`
 	Code string `json:"code"`
 }
 
-//CellsData has the data of every cell received from the frontend as well as the
-//requests each cell has to ask
+// CellsData has the data of every cell received from the frontend as well as the
+// requests each cell has to ask
 type CellsData struct {
 	Data       []CellData `json:"CellsData"`
 	Requests   []XmmRequests
@@ -24,13 +22,13 @@ type CellsData struct {
 
 type HiddenInCell []int
 
-//XMMFormat contains the printing format for every XMM
+// XMMFormat contains the printing format for every XMM
 type XMMFormat struct {
 	DefaultDataFormat     []string
 	DefaultPrintingFormat []string
 }
 
-//XmmRequest has all the information required to get the data from ptrace.
+// XmmRequest has all the information required to get the data from ptrace.
 type XmmRequest struct {
 	XmmNumber   int
 	XmmID       string
@@ -38,10 +36,10 @@ type XmmRequest struct {
 	PrintFormat string
 }
 
-//XmmRequests is a slice containing al XmmRequest in a cell
+// XmmRequests is a slice containing al XmmRequest in a cell
 type XmmRequests []XmmRequest
 
-//NewCellsData creates a new CellsData
+// NewCellsData creates a new CellsData
 func NewCellsData() CellsData {
 	return CellsData{
 		Data:     make([]CellData, 0),
@@ -50,12 +48,12 @@ func NewCellsData() CellsData {
 }
 
 func NewXMMFormat() XMMFormat {
-	defaultDataFormat := make([]string, xmmhandler.XMMREGISTERS)
-	defaultPrintingFormat := make([]string, xmmhandler.XMMREGISTERS)
+	defaultDataFormat := make([]string, XMMREGISTERS)
+	defaultPrintingFormat := make([]string, XMMREGISTERS)
 
 	for i := range defaultDataFormat {
-		defaultDataFormat[i] = xmmhandler.INT8STRING
-		defaultPrintingFormat[i] = xmmhandler.SIGNEDFORMAT
+		defaultDataFormat[i] = INT8STRING
+		defaultPrintingFormat[i] = SIGNEDFORMAT
 	}
 
 	return XMMFormat{
@@ -65,7 +63,7 @@ func NewXMMFormat() XMMFormat {
 
 }
 
-//CellsData2SourceCode converts Cells Data to source code
+// CellsData2SourceCode converts Cells Data to source code
 func (obj *CellsData) CellsData2SourceCode() string {
 	sourceCode := ""
 
@@ -76,7 +74,7 @@ func (obj *CellsData) CellsData2SourceCode() string {
 	return sourceCode
 }
 
-//HandleCellsData edit cells code content such that the cells to source code convertion is direct
+// HandleCellsData edit cells code content such that the cells to source code convertion is direct
 func (obj *CellsData) HandleCellsData(xmmFormat *XMMFormat) bool {
 	obj.toLowerCase()
 	obj.getAllHiddenRegs()
@@ -109,15 +107,6 @@ func (obj *CellsData) getCellHiddenRegs(r *regexp.Regexp, cellIndex int) {
 	}
 }
 
-func containsInt(elem int, s []int) bool {
-	for _, current := range s {
-		if current == elem {
-			return true
-		}
-	}
-	return false
-}
-
 func (obj *CellsData) getHiddenReg(r *regexp.Regexp, match []string, cellIndex int) {
 	values := GetGroupValues(r, match)
 	xmmNumber, _ := strconv.Atoi(values["xmmNumber"])
@@ -143,7 +132,7 @@ func (obj *CellsData) toLowerCase() {
 	}
 }
 
-//GetGroupValues returns a map with each value found in the regexp match
+// GetGroupValues returns a map with each value found in the regexp match
 func GetGroupValues(r *regexp.Regexp, match []string) map[string]string {
 
 	values := make(map[string]string)
@@ -155,7 +144,7 @@ func GetGroupValues(r *regexp.Regexp, match []string) map[string]string {
 	return values
 }
 
-//XmmID2Number receives a string with the format "xmm<number>" and returns the number as an int
+// XmmID2Number receives a string with the format "xmm<number>" and returns the number as an int
 func XmmID2Number(xmmID string) int {
 	runes := []rune(xmmID)
 	xmmSafeString := string(runes[3:])

@@ -1,4 +1,4 @@
-package xmmhandler
+package main
 
 import (
 	"encoding/binary"
@@ -58,10 +58,10 @@ const (
 	BINARYFORMAT = "/t"
 )
 
-//XMM register is represented as a 16 bytes slice with the corresponding values
+// XMM register is represented as a 16 bytes slice with the corresponding values
 type XMM []byte
 
-//NewXMM creates a new XMM
+// NewXMM creates a new XMM
 func NewXMM(p *[]byte) XMM {
 	var resXMM = XMM{}
 	slice := *p
@@ -73,7 +73,7 @@ func NewXMM(p *[]byte) XMM {
 	return resXMM
 }
 
-//Equals compares two XMM
+// Equals compares two XMM
 func (xmm XMM) Equals(newXmm XMM) bool {
 
 	for index := range xmm {
@@ -86,7 +86,7 @@ func (xmm XMM) Equals(newXmm XMM) bool {
 
 }
 
-//Print prints the values in the xmm register as bytes.
+// Print prints the values in the xmm register as bytes.
 func (xmm XMM) Print() {
 	fmt.Println(xmm)
 }
@@ -162,9 +162,9 @@ func numberToString(number int64, bits int64, base int64, symbol string) string 
 	return stringRes
 }
 
-//PrintAs prints the values in the xmm register as bytes, words,
-//double words or quad words depending in the string received.
-//Posible entries: int8, int16, int32, int64, float32, float64
+// PrintAs prints the values in the xmm register as bytes, words,
+// double words or quad words depending in the string received.
+// Posible entries: int8, int16, int32, int64, float32, float64
 func (xmm XMM) PrintAs(format string) {
 	switch format {
 	case "int8":
@@ -245,7 +245,7 @@ func (xmm XMM) AsHex32() []string {
 	return data
 }
 
-//AsHex returns a slice with the values in the xmm register as hex quad words strings.
+// AsHex returns a slice with the values in the xmm register as hex quad words strings.
 func (xmm XMM) AsHex64() []string {
 	data := make([]string, len(xmm)/SIZEOFINT64)
 
@@ -294,7 +294,7 @@ func (xmm XMM) AsBin32() []string {
 	return data
 }
 
-//AsBin returns a slice with the values in the xmm register as hex quad words strings.
+// AsBin returns a slice with the values in the xmm register as hex quad words strings.
 func (xmm XMM) AsBin64() []string {
 	data := make([]string, len(xmm)/SIZEOFINT64)
 
@@ -307,8 +307,8 @@ func (xmm XMM) AsBin64() []string {
 	return data
 }
 
-//AsUint8 returns a slice with the values in the xmm register as unsigned bytes.
-//Must convert values to int16 because javascript won't recognize bytes as numbers.
+// AsUint8 returns a slice with the values in the xmm register as unsigned bytes.
+// Must convert values to int16 because javascript won't recognize bytes as numbers.
 func (xmm XMM) AsUint8() []string {
 	data := make([]string, len(xmm))
 	for i := range data {
@@ -319,8 +319,8 @@ func (xmm XMM) AsUint8() []string {
 	return data
 }
 
-//AsInt8 returns a slice with the values in the xmm register as signed bytes.
-//Must convert values to int16 because javascript won't recognize bytes as numbers.
+// AsInt8 returns a slice with the values in the xmm register as signed bytes.
+// Must convert values to int16 because javascript won't recognize bytes as numbers.
 func (xmm XMM) AsInt8() []string {
 	data := make([]string, len(xmm))
 	for i := range data {
@@ -331,7 +331,7 @@ func (xmm XMM) AsInt8() []string {
 	return data
 }
 
-//AsUint16 returns a slice with the values in the xmm register as unsigned words.
+// AsUint16 returns a slice with the values in the xmm register as unsigned words.
 func (xmm XMM) AsUint16() []string {
 	data := make([]string, len(xmm)/SIZEOFINT16)
 	for i := range data {
@@ -342,7 +342,7 @@ func (xmm XMM) AsUint16() []string {
 	return data
 }
 
-//AsInt16 returns a slice with the values in the xmm register as signed words.
+// AsInt16 returns a slice with the values in the xmm register as signed words.
 func (xmm XMM) AsInt16() []string {
 	data := make([]string, len(xmm)/SIZEOFINT16)
 	for i := range data {
@@ -353,7 +353,7 @@ func (xmm XMM) AsInt16() []string {
 	return data
 }
 
-//AsUint32 returns a slice with the values in the xmm register as unsigned double words.
+// AsUint32 returns a slice with the values in the xmm register as unsigned double words.
 func (xmm XMM) AsUint32() []string {
 	data := make([]string, len(xmm)/SIZEOFINT32)
 	for i := range data {
@@ -364,7 +364,7 @@ func (xmm XMM) AsUint32() []string {
 	return data
 }
 
-//AsInt32 returns a slice with the values in the xmm register as signed double words.
+// AsInt32 returns a slice with the values in the xmm register as signed double words.
 func (xmm XMM) AsInt32() []string {
 	data := make([]string, len(xmm)/SIZEOFINT32)
 	for i := range data {
@@ -375,7 +375,7 @@ func (xmm XMM) AsInt32() []string {
 	return data
 }
 
-//AsUint64 returns a slice with the values in the xmm register as unsigned quad words.
+// AsUint64 returns a slice with the values in the xmm register as unsigned quad words.
 func (xmm XMM) AsUint64() []string {
 	data := make([]string, len(xmm)/SIZEOFINT64)
 	for i := range data {
@@ -386,7 +386,7 @@ func (xmm XMM) AsUint64() []string {
 	return data
 }
 
-//AsInt64 returns a slice with the values in the xmm register as quad words.
+// AsInt64 returns a slice with the values in the xmm register as quad words.
 func (xmm XMM) AsInt64() []string {
 	data := make([]string, len(xmm)/SIZEOFINT64)
 	for i := range data {
@@ -398,7 +398,7 @@ func (xmm XMM) AsInt64() []string {
 	return data
 }
 
-//AsFloat32 returns a slice with the values in the xmm register as simple precision numbers.
+// AsFloat32 returns a slice with the values in the xmm register as simple precision numbers.
 func (xmm XMM) AsFloat32() []string {
 	data := make([]string, len(xmm)/SIZEOFINT32)
 	for i := range data {
@@ -408,7 +408,7 @@ func (xmm XMM) AsFloat32() []string {
 	return data
 }
 
-//AsFloat64 returns a slice with the values in the xmm register as double precision numbers.
+// AsFloat64 returns a slice with the values in the xmm register as double precision numbers.
 func (xmm XMM) AsFloat64() []string {
 	data := make([]string, len(xmm)/SIZEOFINT64)
 	for i := range data {
@@ -418,12 +418,12 @@ func (xmm XMM) AsFloat64() []string {
 	return data
 }
 
-//XMMHandler has all 16 XMM registers and is created with a pointer to the start of XMM Space.
+// XMMHandler has all 16 XMM registers and is created with a pointer to the start of XMM Space.
 type XMMHandler struct {
 	Xmm []XMM
 }
 
-//NewXMMHandler creates a new XMMHandler
+// NewXMMHandler creates a new XMMHandler
 func NewXMMHandler(p *[]byte) XMMHandler {
 	handlerRes := XMMHandler{Xmm: make([]XMM, XMMREGISTERS)}
 	slice := *p
@@ -436,7 +436,7 @@ func NewXMMHandler(p *[]byte) XMMHandler {
 	return handlerRes
 }
 
-//PrintAs print all XMM registers as the type passed by parameter.
+// PrintAs print all XMM registers as the type passed by parameter.
 func (handler XMMHandler) PrintAs(format string) {
 
 	for i, xmm := range handler.Xmm {
@@ -446,7 +446,7 @@ func (handler XMMHandler) PrintAs(format string) {
 	fmt.Printf("\n")
 }
 
-//GetXMMData will call the corresponding As<format> function given the xmmNumber and the data format desired.
+// GetXMMData will call the corresponding As<format> function given the xmmNumber and the data format desired.
 func (handler *XMMHandler) GetXMMData(xmmNumber int, dataFormat string, printFormat string) []string {
 
 	switch dataFormat {
