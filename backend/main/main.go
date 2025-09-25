@@ -589,17 +589,7 @@ func codeSave(w http.ResponseWriter, req *http.Request) {
 		///////////////////////////////////////////////////////
 	*/
 	//NASM con namespace de todo tipo y color
-	nasmCmd := exec.Command(execMap["minijail0"], //Path a minijail
-		"-p",                            //PID namespace
-		"-n",                            //No new priviligies
-		"-S", "../policies/nasm.policy", //Setea las policies para NASM
-		"-v",               //Vamos a crear un nuevo VFS
-		"-P", "/var/empty", //Hacemos un pivot_root a /var/empty
-		"-b", fmt.Sprintf("%s,,1", randomFolder), // Bindeamos la carpeta del cliente a si misma con permiso de escritura
-		"-b", "/usr/bin/nasm", //Bindiamos esto para tener el binario a NASM
-		"-b", "/proc", //Bindiamos /proc
-		"-r",                                                                     //Remonta /proc a readonly
-		execMap["nasm"], "-f", "elf64", randomFile+".asm", "-o", randomFile+".o") //Comando ejecutador de NASM
+	nasmCmd := exec.Command(execMap["nasm"], "-f", "elf64", randomFile+".asm", "-o", randomFile+".o") //Comando ejecutador de NASM
 	var stderr bytes.Buffer
 	nasmCmd.Stderr = &stderr
 	nasmCmd.Stdout = os.Stdout
@@ -640,17 +630,7 @@ func codeSave(w http.ResponseWriter, req *http.Request) {
 	fmt.Println("Program compiled correctly")
 
 	//LD con namespace de todo tipo y color
-	linkingCmd := exec.Command(execMap["minijail0"], //Path a minijail
-		"-p",                          //PID namespace
-		"-n",                          //No new priviligies
-		"-S", "../policies/ld.policy", //Setea las policies para LD
-		"-v",               //Vamos a crear un nuevo VFS
-		"-P", "/var/empty", //Hacemos un pivot_root a /var/empty
-		"-b", fmt.Sprintf("%s,,1", randomFolder), // Bindeamos la carpeta del cliente a si misma con permiso de escritura
-		"-b", "/usr/bin/ld", //Bindiamos esto para tener el binario a LD
-		"-b", "/proc", //Bindiamos /proc
-		"-r",                                                                     //Remonta /proc a readonly
-		execMap["ld"], "-nostdlib", "-static", "-o", randomFile, randomFile+".o") //Comando ejecutador de LD
+	linkingCmd := exec.Command(execMap["ld"], "-nostdlib", "-static", "-o", randomFile, randomFile+".o") //Comando ejecutador de LD
 	linkingCmd.Stderr = &stderr
 	linkingCmd.Stdout = os.Stdout
 
