@@ -6,7 +6,7 @@
 #To run:
 #sudo docker run -d --rm --name v-simd-front --network host visual-simd-front
 
-FROM node:alpine
+FROM public.ecr.aws/docker/library/node:alpine
 
 WORKDIR '/app'
 
